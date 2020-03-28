@@ -1,4 +1,4 @@
-﻿/* tslint:disable:no-string-literal */
+/* tslint:disable:no-string-literal */
 import * as _ from 'lodash';
 //import nodeify from '../node_modules/nodeify-ts/lib/';
 import nodeify from 'nodeify-ts';
@@ -25,6 +25,14 @@ export class Aws {
 
   public command(command: string, callback?: (err: any, data: any) => void) {
     let aws = this;
+
+    // validating the input command for invalid characters to prevent command injection
+    var invalid_chars = /[!";|`$()&<>]/;
+    if (invalid_chars.test(command)) {
+      console.log("\nerror: The command contains invalid characters\n");
+      return;
+    }
+
     let execCommand = 'aws ' + command;
 
     const promise = Promise.resolve().then(function () {
